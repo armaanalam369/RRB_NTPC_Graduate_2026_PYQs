@@ -95,6 +95,9 @@ button.opt:active{transform:scale(.98)}
 .big{font-size:2.8rem;font-weight:900;background:linear-gradient(90deg,var(--a),var(--b));-webkit-background-clip:text;background-clip:text;color:transparent}
 .dot{width:28px;height:28px;border-radius:50%;border:2px solid var(--bg2);box-shadow:0 0 0 1px var(--bd)}
 .dot.on{box-shadow:0 0 0 3px var(--tx)}
+.sel{width:100%;padding:13px 14px;border-radius:14px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font:inherit;font-weight:600}
+.expl{margin-top:12px;padding:12px 14px;border-radius:14px;background:var(--bg);border:1px solid var(--bd);line-height:1.55;font-size:.95rem;animation:in .25s}
+.qn.ok{background:#10b981;color:#fff;border-color:#10b981}.qn.bad{background:#ef4444;color:#fff;border-color:#ef4444}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
 </head>
@@ -124,8 +127,8 @@ if(demo){
   window.RULES={fullMinutes:90,negative:1/3,sections:["Maths","Reasoning","General Studies"]};
   window.DAYS=[{date:"2025-06-05",shifts:{1:"demo"}}];
   window.PAPERS={"2025-06-05_S1":{date:"2025-06-05",shift:1,questions:[
-   {s:"Maths",c:"Percentage",q:"What is 15% of 240?",o:["30","36","40","42"],a:1},
-   {s:"Maths",c:"Time & Distance",q:"A train 120 m long crosses a pole in 6 s. Its speed in km/h is?",o:["60","66","72","80"],a:2},
+   {s:"Maths",c:"Percentage",q:"What is 15% of 240?",o:["30","36","40","42"],a:1,e:"15% of 240 = 240 × 15/100 = 36."},
+   {s:"Maths",c:"Time & Distance",q:"A train 120 m long crosses a pole in 6 s. Its speed in km/h is?",o:["60","66","72","80"],a:2,e:"Speed = 120/6 = 20 m/s; × 3.6 = 72 km/h."},
    {s:"Reasoning",c:"Number Series",q:"Find the next term: 2, 6, 12, 20, ?",o:["28","30","32","36"],a:1},
    {s:"Reasoning",c:"Coding-Decoding",q:"If CAT = 24 and DOG = 26, then BAT = ?",o:["23","24","25","27"],a:0},
    {s:"General Studies",c:"Polity",q:"Who is known as the Father of the Indian Constitution?",o:["Nehru","Gandhi","B. R. Ambedkar","Patel"],a:2},
@@ -139,7 +142,7 @@ function get(k,d){try{var v=localStorage.getItem(k);return v===null?d:JSON.parse
 var SET=Object.assign({font:1,motion:true,showTimer:true,autoNext:false,shuffleQ:false,shuffleO:false,confirmSubmit:true,autoWrong:true,haptic:true,wake:false,defMins:30,defNeg:true},get('wc_set',{}));
 var ATT=get('wc_att',[]),SAV=get('wc_sav',{});
 var th=get('wc_t','dark'),pl=get('wc_p','violet');root.dataset.theme=th;root.dataset.pal=pl;
-var S={view:'home',day:null,shift:null,mode:'full',secs:{},neg:SET.defNeg,mins:SET.defMins,qs:[],ans:[],qt:[],mk:{},cur:0,left:0,total:0,t:null,grid:false,tab:'last',sf:'all',cf:'All',wl:null};
+var S={kind:'test',run:'test',el:0,view:'home',day:null,shift:null,mode:'full',secs:{},neg:SET.defNeg,mins:SET.defMins,qs:[],ans:[],qt:[],mk:{},cur:0,left:0,total:0,t:null,grid:false,tab:'last',sf:'all',cf:'All',wl:null};
 R.sections.forEach(function(s){S.secs[s]=true});
 function prefs(){root.style.setProperty('--fs',['14.5px','16px','18px'][SET.font]);root.dataset.motion=SET.motion?'on':'off'}
 function saveSet(){put('wc_set',SET);prefs()}
@@ -147,7 +150,7 @@ prefs();
 /* ---------- helpers ---------- */
 var pad=function(n){return String(n).padStart(2,'0')};
 var fmt=function(s){s=Math.max(0,s);return pad(Math.floor(s/60))+':'+pad(s%60)};
-var fmtDate=function(d){var x=new Date(d+'T00:00');return isNaN(x)?d:x.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})};
+var fmtDate=function(d,wd){var x=new Date(d+'T00:00');if(isNaN(x))return d;var o={day:'numeric',month:'short',year:'numeric'};if(wd)o.weekday='short';return x.toLocaleDateString('en-IN',o)};
 var pct=function(a,b){return b?Math.round(a/b*100):0};
 var tone=function(p){return p>=75?'#10b981':p>=50?'#f59e0b':'#ef4444'};
 var lab=function(p){return p>=75?'Strong':p>=50?'Average':'Weak'};
@@ -161,30 +164,44 @@ function getWake(){if(SET.wake&&navigator.wakeLock)navigator.wakeLock.request('s
 function relWake(){try{if(S.wl)S.wl.release()}catch(e){}S.wl=null}
 function shuf(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}return a}
 /* saved questions */
-function keep(q,f){var e=SAV[q._k]||(SAV[q._k]={k:q._k,s:q.s,c:q.c||'General',q:q.q,o:q.o,a:q.a,src:q._src||''});e[f]=true}
+function keep(q,f){var e=SAV[q._k]||(SAV[q._k]={k:q._k,s:q.s,c:q.c||'General',q:q.q,o:q.o,a:q.a,e:q.e||'',src:q._src||''});e[f]=true}
 function prune(){Object.keys(SAV).forEach(function(k){if(!SAV[k].b&&!SAV[k].w)delete SAV[k]})}
 function persist(){prune();put('wc_sav',SAV)}
 /* ---------- home ---------- */
+function dsel(){
+  var ds=DAYS.slice().sort(function(a,b){return a.date<b.date?-1:1}),g={},ord=[];
+  ds.forEach(function(d){var x=new Date(d.date+'T00:00'),m=isNaN(x)?'Other':x.toLocaleDateString('en-IN',{month:'long',year:'numeric'});if(!g[m]){g[m]=[];ord.push(m)}g[m].push(d)});
+  return '<select class="sel" id="dsel"><option value="">Select date…</option>'+ord.map(function(m){return '<optgroup label="'+m+'">'+g[m].map(function(d){return '<option value="'+d.date+'"'+(S.day===d.date?' selected':'')+'>'+fmtDate(d.date,1)+'</option>'}).join('')+'</optgroup>'}).join('')+'</select>';
+}
 function home(){
   if(S.mode==='saved')S.mode='full';
   S.view='home';clearInterval(S.t);relWake();fabs(false);closeGrid();
-  var d=DAYS.filter(function(x){return x.date===S.day})[0];
+  var d=DAYS.filter(function(x){return x.date===S.day})[0],q=S.kind==='quiz';
+  var shifts='<div class="chips">'+[1,2,3].map(function(n){var ok=d&&d.shifts[n];return '<button class="chip '+(S.shift===n?'on':'')+'" data-act="shift" data-v="'+n+'" '+(ok?'':'disabled')+'>Shift '+n+'</button>'}).join('')+'</div>'+(d?'':'<p class="mu" style="margin-top:8px">Pick a date first.</p>');
+  var card='';
+  if(!q&&S.mode==='full')card='<b>Standard exam pattern</b><p class="mu" style="margin-top:4px">Fixed '+R.fullMinutes+' minutes · all sections · negative marking of '+R.negative.toFixed(2)+' per wrong answer.</p>';
+  else{
+    if(q)card+='<b>Instant-feedback quiz</b><p class="mu" style="margin:4px 0 8px">See the right answer and explanation right after each question. No timer.</p>';
+    if(S.mode==='sec')card+='<b>Sections</b>'+R.sections.map(function(s){return '<div class="line"><span>'+s+'</span>'+sw(S.secs[s],'sec',s)+'</div>'}).join('');
+    card+='<div class="line"><span>Negative marking</span>'+sw(S.neg,'neg')+'</div>';
+    if(!q)card+='<div class="line"><span>Time (minutes)</span><input type="number" id="mins" min="1" max="180" value="'+S.mins+'"></div>';
+  }
   render('<h1>Practice smarter 🚀</h1><p class="mu">RRB NTPC (Graduate) · Previous Year Questions</p>'+
-  '<h2>1 · Choose Day</h2><div class="chips">'+DAYS.map(function(x){return '<button class="chip '+(S.day===x.date?'on':'')+'" data-act="day" data-v="'+x.date+'">'+fmtDate(x.date)+'</button>'}).join('')+'</div>'+
-  '<h2>2 · Choose Shift</h2><div class="chips">'+[1,2,3].map(function(n){var ok=d&&d.shifts[n];return '<button class="chip '+(S.shift===n?'on':'')+'" data-act="shift" data-v="'+n+'" '+(ok?'':'disabled')+'>Shift '+n+'</button>'}).join('')+'</div>'+
-  (d?'':'<p class="mu" style="margin-top:8px">Pick a day first.</p>')+
-  '<h2>3 · Choose Test Type</h2><div class="chips"><button class="chip '+(S.mode==='full'?'on':'')+'" data-act="mode" data-v="full">Full Test</button><button class="chip '+(S.mode==='sec'?'on':'')+'" data-act="mode" data-v="sec">Sectional (Custom)</button></div>'+
-  '<div class="card" style="margin-top:12px">'+(S.mode==='full'
-   ?'<b>Standard exam pattern</b><p class="mu" style="margin-top:4px">Fixed '+R.fullMinutes+' minutes · all sections · negative marking of '+R.negative.toFixed(2)+' per wrong answer.</p>'
-   :'<b>Sections</b>'+R.sections.map(function(s){return '<div class="line"><span>'+s+'</span>'+sw(S.secs[s],'sec',s)+'</div>'}).join('')+
-    '<div class="line"><span>Negative marking</span>'+sw(S.neg,'neg')+'</div>'+
-    '<div class="line"><span>Time (minutes)</span><input type="number" id="mins" min="1" max="180" value="'+S.mins+'"></div>')+'</div>'+
-  '<button class="btn" data-act="start" style="width:100%;padding:16px">Start Test →</button>'+
+  '<h2>1 · Date</h2>'+dsel()+
+  '<h2>2 · Shift</h2>'+shifts+
+  '<h2>3 · Mode</h2><div class="chips"><button class="chip '+(!q?'on':'')+'" data-act="kind" data-v="test">📝 Exam Test</button><button class="chip '+(q?'on':'')+'" data-act="kind" data-v="quiz">💡 Quiz (instant answers)</button></div>'+
+  '<h2>4 · Scope</h2><div class="chips"><button class="chip '+(S.mode==='full'?'on':'')+'" data-act="mode" data-v="full">Full paper</button><button class="chip '+(S.mode==='sec'?'on':'')+'" data-act="mode" data-v="sec">Sectional (Custom)</button></div>'+
+  '<div class="card" style="margin-top:12px">'+card+'</div>'+
+  '<button class="btn" data-act="start" style="width:100%;padding:16px">'+(q?'Start Quiz →':'Start Test →')+'</button>'+
   (demo?'<p class="note">Demo mode: the <b>data</b> folder was not found, so a built-in sample paper is shown. Keep index.html next to the data folder to use your own papers.</p>':''));
 }
 document.addEventListener('input',function(e){
   if(e.target.id==='mins')S.mins=+e.target.value||1;
   if(e.target.id==='dm'){SET.defMins=Math.max(1,Math.min(180,+e.target.value||30));S.mins=SET.defMins;saveSet()}
+});
+document.addEventListener('change',function(e){
+  if(e.target.id==='dsel')A.day(e.target.value);
+  if(e.target.id==='ssel'&&e.target.value)A.shift(e.target.value);
 });
 /* ---------- test ---------- */
 function load(day,shift){return new Promise(function(res,rej){
@@ -201,21 +218,38 @@ async function start(){
   var key=day.date+'_S'+S.shift,src=fmtDate(day.date)+' · Shift '+S.shift,qs=[];
   paper.questions.forEach(function(q,i){if(S.mode==='full'||secs.indexOf(q.s)>-1)qs.push(Object.assign({},q,{_k:key+'#'+i,_src:src}))});
   if(!qs.length)return alert('No questions found for this selection.');
-  S.src=src;begin(qs,(S.mode==='full'?R.fullMinutes:Math.max(1,S.mins))*60);
+  S.src=src;begin(qs,S.kind==='quiz'?0:(S.mode==='full'?R.fullMinutes:Math.max(1,S.mins))*60);
 }
-function begin(qs,total){
+function begin(qs,total,kind){
+  S.run=kind||S.kind;
   if(SET.shuffleQ){var g={},o=[];qs.forEach(function(q){if(!g[q.s]){g[q.s]=[];o.push(q.s)}g[q.s].push(q)});qs=[];o.forEach(function(s){qs=qs.concat(shuf(g[s]))})}
   if(SET.shuffleO)qs=qs.map(function(q){var ord=shuf(q.o.map(function(_,i){return i}));return Object.assign({},q,{o:ord.map(function(i){return q.o[i]}),a:ord.indexOf(q.a)})});
-  S.qs=qs;S.ans=qs.map(function(){return null});S.qt=qs.map(function(){return 0});S.mk={};S.cur=0;S.total=total;S.left=total;
+  S.qs=qs;S.ans=qs.map(function(){return null});S.qt=qs.map(function(){return 0});S.mk={};S.cur=0;S.total=total;S.left=total;S.el=0;
   clearInterval(S.t);S.t=setInterval(tick,1000);getWake();fabs(true);test();
 }
 function tick(){
-  S.left--;if(S.view==='test')S.qt[S.cur]++;
+  S.el++;if(S.view==='test')S.qt[S.cur]++;
+  if(S.run==='quiz')return;
+  S.left--;
   var el=$('#tm');if(el){el.textContent=SET.showTimer?fmt(S.left):'⏱ ••';el.classList.toggle('low',S.left<300)}
   if(S.left<=0){alert('Time is up!');submit()}
 }
+function quizView(){
+  var q=S.qs[S.cur],a=S.ans[S.cur],done=a!==null,c=0,w=0,secs=[],sv=SAV[q._k]&&SAV[q._k].b;
+  S.ans.forEach(function(x,i){if(x!==null){x===S.qs[i].a?c++:w++}});
+  S.qs.forEach(function(x){if(secs.indexOf(x.s)<0)secs.push(x.s)});
+  render('<div class="top"><span class="mu">Q '+(S.cur+1)+' / '+S.qs.length+'</span><span class="timer">✅ '+c+' · ❌ '+w+'</span></div>'+
+  '<div class="bar"><i style="width:'+((S.cur+1)/S.qs.length*100)+'%"></i></div>'+
+  '<div class="chips sm">'+secs.map(function(s){return '<button class="chip '+(s===q.s?'on':'')+'" data-act="secjump" data-v="'+s+'">'+s+'</button>'}).join('')+'</div>'+
+  '<div class="card">'+(q.c?'<span class="tag">'+q.c+'</span><div style="height:8px"></div>':'')+'<b class="qt">'+q.q+'</b>'+
+  q.o.map(function(o,i){return '<button class="opt '+(done?(i===q.a?'ok':i===a?'bad':''):'')+'" data-act="opt" data-v="'+i+'">'+'ABCD'.charAt(i)+'. '+o+'</button>'}).join('')+
+  (done?'<div class="expl"><b>'+(a===q.a?'✅ Correct!':'❌ Incorrect')+'</b> · Answer: '+'ABCD'.charAt(q.a)+'<br>💡 '+(q.e||'No explanation added for this question yet.')+'</div>':'')+'</div>'+
+  '<div class="row"><button class="btn g" data-act="prev">←</button><button class="btn g" data-act="save">'+(sv?'🔖 Saved':'🔖 Save')+'</button><button class="btn" data-act="next" style="margin-left:auto">'+(S.cur===S.qs.length-1?'Finish ✓':'Next →')+'</button></div>');
+  if(S.grid)fillGrid();
+}
+function qcls(i){if(S.run==='quiz')return S.ans[i]===null?'':(S.ans[i]===S.qs[i].a?'ok':'bad');return (S.ans[i]!==null?'ans':'')+' '+(S.mk[i]?'mk':'')}
 function test(){
-  S.view='test';
+  S.view='test';if(S.run==='quiz')return quizView();
   var q=S.qs[S.cur],done=S.ans.filter(function(a){return a!==null}).length,secs=[],sv=SAV[q._k]&&SAV[q._k].b;
   S.qs.forEach(function(x){if(secs.indexOf(x.s)<0)secs.push(x.s)});
   render('<div class="top"><span class="mu">Q '+(S.cur+1)+' / '+S.qs.length+' · '+done+' answered</span><span class="timer '+(S.left<300?'low':'')+'" id="tm">'+(SET.showTimer?fmt(S.left):'⏱ ••')+'</span></div>'+
@@ -228,14 +262,14 @@ function test(){
 function fillGrid(){
   var a=S.ans.filter(function(x){return x!==null}).length,m=Object.keys(S.mk).length;
   $('#drawer').innerHTML='<b>Questions</b><p class="mu" style="margin-top:4px">🟩 '+a+' answered · 🟧 '+m+' marked · '+(S.qs.length-a)+' left</p><div class="grid">'+
-   S.qs.map(function(_,i){return '<button class="qn '+(S.ans[i]!==null?'ans':'')+' '+(S.mk[i]?'mk':'')+' '+(i===S.cur?'cur':'')+'" data-act="jump" data-v="'+i+'">'+(i+1)+'</button>'}).join('')+
+   S.qs.map(function(_,i){return '<button class="qn '+qcls(i)+' '+(i===S.cur?'cur':'')+'" data-act="jump" data-v="'+i+'">'+(i+1)+'</button>'}).join('')+
    '</div><button class="btn" data-act="submit" style="width:100%">Submit Test</button>';
 }
 function openGrid(){S.grid=true;fillGrid();$('#drawer').classList.add('show');$('#shade').classList.add('show')}
 function closeGrid(){S.grid=false;$('#drawer').classList.remove('show');$('#shade').classList.remove('show')}
 function submit(){
   clearInterval(S.t);relWake();fabs(false);closeGrid();S.view='result';
-  var neg=S.mode==='full'?R.negative:(S.neg?R.negative:0),st={},ch={},det=[],sc=0;
+  var neg=(S.run==='test'&&S.mode==='full')?R.negative:(S.neg?R.negative:0),st={},ch={},det=[],sc=0;
   S.qs.forEach(function(q,i){
     var r=S.ans[i]===null?'n':S.ans[i]===q.a?'c':'w',ck=q.s+'|'+(q.c||'General');
     var x=st[q.s]=st[q.s]||{c:0,w:0,n:0,t:0},y=ch[ck]=ch[ck]||{c:0,w:0,n:0,t:0};
@@ -245,13 +279,13 @@ function submit(){
     if(r==='c'&&S.mode==='saved'&&SAV[q._k])SAV[q._k].w=false;
   });
   persist();
-  ATT.push({ts:Date.now(),src:S.mode==='saved'?'Saved-question practice':S.src,mode:S.mode,sc:sc,max:S.qs.length,used:S.total-Math.max(0,S.left),total:S.total,secs:st,chaps:ch,det:det});
+  ATT.push({ts:Date.now(),src:S.mode==='saved'?'Saved-question practice':S.src+(S.run==='quiz'?' · Quiz':''),mode:S.mode,sc:sc,max:S.qs.length,used:S.el,total:S.total,secs:st,chaps:ch,det:det});
   if(ATT.length>40)ATT.shift();put('wc_att',ATT);
   render('<div class="card" style="text-align:center"><p class="mu">Your Score</p><div class="big">'+sc.toFixed(2)+' / '+S.qs.length+'</div><p class="mu">Time taken: '+fmt(ATT[ATT.length-1].used)+'</p></div>'+
   Object.keys(st).map(function(k){var v=st[k];return '<div class="card"><b>'+k+'</b> <span class="mu">✅ '+v.c+' · ❌ '+v.w+' · ⏭ '+v.n+'</span><div class="bar" style="margin-bottom:0"><i style="width:'+pct(v.c,v.t)+'%"></i></div></div>'}).join('')+
   '<div class="row" style="margin:6px 0"><button class="btn" data-act="sheet" data-v="last">📊 Full analysis</button><button class="btn g" data-act="home">← Home</button></div>'+
   (S.mode!=='saved'&&SET.autoWrong?'<p class="mu">Wrong answers were added to your 🔖 Saved notebook.</p>':'')+
-  '<h2>Review</h2>'+S.qs.map(function(q,i){return '<div class="card"><div class="line" style="padding-top:0"><span class="mu">'+q.s+' · Q'+(i+1)+'</span><button class="btn g s" data-act="rsave" data-v="'+i+'">'+(SAV[q._k]&&SAV[q._k].b?'🔖 Saved':'🔖 Save')+'</button></div><b class="qt">'+q.q+'</b>'+q.o.map(function(o,j){return '<div class="opt '+(j===q.a?'ok':S.ans[i]===j?'bad':'')+'">'+o+'</div>'}).join('')+'</div>'}).join(''));
+  '<h2>Review</h2>'+S.qs.map(function(q,i){return '<div class="card"><div class="line" style="padding-top:0"><span class="mu">'+q.s+' · Q'+(i+1)+'</span><button class="btn g s" data-act="rsave" data-v="'+i+'">'+(SAV[q._k]&&SAV[q._k].b?'🔖 Saved':'🔖 Save')+'</button></div><b class="qt">'+q.q+'</b>'+q.o.map(function(o,j){return '<div class="opt '+(j===q.a?'ok':S.ans[i]===j?'bad':'')+'">'+o+'</div>'}).join('')+(q.e?'<div class="expl">💡 '+q.e+'</div>':'')+'</div>'}).join(''));
 }
 /* ---------- analytics sheet ---------- */
 function st(l,v){return '<div class="stat"><span class="mu">'+l+'</span><b>'+v+'</b></div>'}
@@ -302,7 +336,7 @@ function tSav(){
   var h='<div class="chips sm">'+[['all','All ('+all+')'],['b','🔖 Bookmarked'],['w','❌ Wrong notebook']].map(function(x){return '<button class="chip '+(S.sf===x[0]?'on':'')+'" data-act="sfil" data-v="'+x[0]+'">'+x[1]+'</button>'}).join('')+'</div>';
   if(!l.length)return h+empty('🔖','Nothing saved here','Tap 🔖 Save during a test. Wrong answers are saved automatically.');
   return h+'<button class="btn" data-act="practice" style="width:100%;margin-bottom:12px">▶ Practise these ('+l.length+')</button>'+l.map(function(e){
-    return '<div class="card"><div class="line" style="padding:0 0 6px"><span><span class="tag">'+e.s+' · '+e.c+'</span> '+(e.w?'<span class="tag" style="color:#ef4444">wrong</span>':'')+'</span><button class="btn g s" data-act="delsav" data-v="'+e.k+'">🗑</button></div><b class="qt">'+e.q+'</b><div class="opt ok" style="margin-top:10px">✅ '+'ABCD'.charAt(e.a)+'. '+e.o[e.a]+'</div><span class="mu">'+e.src+'</span></div>'}).join('');
+    return '<div class="card"><div class="line" style="padding:0 0 6px"><span><span class="tag">'+e.s+' · '+e.c+'</span> '+(e.w?'<span class="tag" style="color:#ef4444">wrong</span>':'')+'</span><button class="btn g s" data-act="delsav" data-v="'+e.k+'">🗑</button></div><b class="qt">'+e.q+'</b><div class="opt ok" style="margin-top:10px">✅ '+'ABCD'.charAt(e.a)+'. '+e.o[e.a]+'</div>'+(e.e?'<div class="expl">💡 '+e.e+'</div>':'')+'<span class="mu">'+e.src+'</span></div>'}).join('');
 }
 function setRow(l,d,c){return '<div class="line"><span>'+l+(d?'<small>'+d+'</small>':'')+'</span>'+c+'</div>'}
 function tSet(){
@@ -341,15 +375,20 @@ $('#imp').addEventListener('change',function(e){var f=e.target.files[0];if(!f)re
 var A={
  theme:function(){root.dataset.theme=root.dataset.theme==='dark'?'light':'dark';put('wc_t',root.dataset.theme);if($('#sheet').classList.contains('show'))sheet()},
  pick:function(v){root.dataset.pal=v;put('wc_p',v);if($('#sheet').classList.contains('show'))sheet()},
- day:function(v){S.day=v;var d=DAYS.filter(function(x){return x.date===v})[0];if(!d.shifts[S.shift])S.shift=null;home()},
+ day:function(v){S.day=v||null;var d=DAYS.filter(function(x){return x.date===v})[0];if(!d||!d.shifts[S.shift])S.shift=null;home()},
  shift:function(v){S.shift=+v;home()},
  mode:function(v){S.mode=v;home()},
+ kind:function(v){S.kind=v;home()},
  sec:function(v){S.secs[v]=!S.secs[v];home()},
  neg:function(){S.neg=!S.neg;home()},
  start:start,home:home,
- opt:function(v){buzz();S.ans[S.cur]=+v;var c=S.cur;test();if(SET.autoNext&&c<S.qs.length-1)setTimeout(function(){if(S.view==='test'&&S.cur===c){S.cur++;test()}},280)},
+ opt:function(v){
+   if(S.run==='quiz'){if(S.ans[S.cur]!==null)return;buzz();S.ans[S.cur]=+v;test();return}
+   buzz();S.ans[S.cur]=+v;var c=S.cur;test();if(SET.autoNext&&c<S.qs.length-1)setTimeout(function(){if(S.view==='test'&&S.cur===c){S.cur++;test()}},280)},
  prev:function(){if(S.cur>0){S.cur--;test()}},
- next:function(){if(S.cur<S.qs.length-1){S.cur++;test()}else if(ask('Submit the test?'))submit()},
+ next:function(){if(S.cur<S.qs.length-1){S.cur++;test();return}
+   if(S.run==='quiz'){var u=S.ans.filter(function(x){return x===null}).length;if(u&&!confirm(u+' question(s) unanswered. Finish the quiz?'))return;submit()}
+   else if(ask('Submit the test?'))submit()},
  mark:function(){if(S.mk[S.cur])delete S.mk[S.cur];else S.mk[S.cur]=1;test()},
  clear:function(){S.ans[S.cur]=null;test()},
  save:function(){var q=S.qs[S.cur],e=SAV[q._k];if(e&&e.b)e.b=false;else keep(q,'b');persist();test()},
@@ -366,7 +405,7 @@ var A={
  practice:function(){
    if(S.view==='test')return alert('Finish or exit the current test first.');
    var l=savedList();if(!l.length)return;closeSheet();S.mode='saved';
-   begin(l.map(function(e){return {s:e.s,c:e.c,q:e.q,o:e.o.slice(),a:e.a,_k:e.k,_src:e.src}}),l.length*60)},
+   begin(l.map(function(e){return {s:e.s,c:e.c,q:e.q,o:e.o.slice(),a:e.a,_k:e.k,_src:e.src}}),0,'quiz')},
  tg:function(v){SET[v]=!SET[v];if(v==='defNeg')S.neg=SET.defNeg;saveSet();sheet()},
  font:function(v){SET.font=+v;saveSet();sheet()},
  'export':function(){download('wise-choice-backup.json',JSON.stringify({att:ATT,sav:SAV,set:SET}))},
