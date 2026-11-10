@@ -1,203 +1,386 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="dark" data-palette="indigo">
+<html lang="en" data-theme="dark" data-pal="violet" data-motion="on">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>WISE CHOICE Study Buddy - RRB NTPC PYQs</title>
-  <link rel="stylesheet" href="css/style.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>WISE CHOICE Study Buddy</title>
+<script src="data/manifest.js"></script>
+<style>
+[data-theme=dark]{--bg:#0d0d17;--bg2:#161625;--card:#1d1d30;--tx:#f1f1fa;--mu:#9494b0;--bd:#2d2d46}
+[data-theme=light]{--bg:#f2f3fa;--bg2:#fff;--card:#fff;--tx:#17172b;--mu:#68687f;--bd:#dcdcea}
+[data-pal=violet]{--a:#8b5cf6;--b:#ec4899}
+[data-pal=ocean]{--a:#06b6d4;--b:#3b82f6}
+[data-pal=sunset]{--a:#f97316;--b:#e11d48}
+[data-pal=forest]{--a:#10b981;--b:#65a30d}
+[data-pal=rose]{--a:#f43f5e;--b:#a855f7}
+html{font-size:var(--fs,16px)}
+*{box-sizing:border-box;margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--tx);min-height:100vh;min-height:100dvh;transition:background .3s,color .3s;overflow-x:hidden}
+button{font:inherit;color:inherit;cursor:pointer}
+.bg{position:fixed;inset:0;z-index:0;pointer-events:none;overflow:hidden}
+[data-motion=off] .bg,[data-motion=off] .fab.main::after{display:none}
+.bg i{position:absolute;border-radius:50%;opacity:.18;background:radial-gradient(circle at 30% 30%,var(--a),transparent 70%);will-change:transform;animation:drift 22s ease-in-out infinite alternate}
+.bg i:nth-child(1){width:300px;height:300px;top:-60px;left:-70px}
+.bg i:nth-child(2){width:240px;height:240px;top:40%;right:-80px;background:radial-gradient(circle at 30% 30%,var(--b),transparent 70%);animation-duration:28s;animation-delay:-8s}
+.bg i:nth-child(3){width:200px;height:200px;bottom:-50px;left:25%;animation-duration:25s;animation-delay:-14s}
+.bg i:nth-child(4){width:90px;height:90px;top:18%;left:60%;background:radial-gradient(circle,var(--b),transparent 70%);animation-duration:18s}
+@keyframes drift{to{transform:translate3d(50px,-60px,0) scale(1.2)}}
+header{position:sticky;top:0;z-index:20;display:flex;justify-content:space-between;align-items:center;padding:12px 16px;padding-top:calc(12px + env(safe-area-inset-top));background:var(--bg2);border-bottom:1px solid var(--bd)}
+.logo{font-weight:900;font-size:1.05rem;background:linear-gradient(90deg,var(--a),var(--b));-webkit-background-clip:text;background-clip:text;color:transparent}
+.sw{width:48px;height:27px;border-radius:20px;border:0;background:var(--bd);position:relative;flex:none;transition:background .25s}
+.sw i{position:absolute;top:3px;left:3px;width:21px;height:21px;border-radius:50%;background:#fff;display:grid;place-items:center;font-size:12px;font-style:normal;transition:transform .25s;box-shadow:0 1px 4px #0004}
+.sw.on,[data-theme=light] #tgl{background:linear-gradient(135deg,var(--a),var(--b))}
+.sw.on i,[data-theme=light] #tgl i{transform:translateX(21px)}
+#tgl i::before{content:"🌙"}[data-theme=light] #tgl i::before{content:"☀️"}
+main{position:relative;z-index:1;max-width:720px;margin:0 auto;padding:20px 16px 150px}
+main.in{animation:in .35s ease-out}
+@keyframes in{from{opacity:0;transform:translateY(14px)}}
+h1{font-size:1.9rem;line-height:1.15}
+h2{font-size:1rem;margin:22px 0 10px}
+.mu{color:var(--mu);font-size:.9rem}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:18px;padding:16px;margin-bottom:12px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{padding:10px 16px;border-radius:30px;border:1px solid var(--bd);background:var(--card);font-weight:600;transition:transform .15s}
+.chip:active{transform:scale(.94)}
+.chip.on{background:linear-gradient(135deg,var(--a),var(--b));color:#fff;border-color:transparent}
+.chip:disabled{opacity:.35}
+.btn{border:0;padding:13px 22px;border-radius:30px;font-weight:700;color:#fff;background:linear-gradient(135deg,var(--a),var(--b));transition:transform .15s}
+.btn:active{transform:scale(.95)}
+.btn.g{background:var(--card);color:var(--tx);border:1px solid var(--bd)}
+.btn.s{padding:8px 14px;font-size:.85rem}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.line{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:9px 0}
+.line small{display:block;color:var(--mu);font-size:.78rem;margin-top:2px}
+input[type=number]{width:76px;padding:8px;border-radius:10px;border:1px solid var(--bd);background:var(--bg);color:var(--tx)}
+.note{font-size:.8rem;padding:8px 12px;border-radius:12px;background:var(--card);border:1px dashed var(--bd);margin-top:14px;color:var(--mu)}
+.fabs{position:fixed;right:16px;bottom:calc(16px + env(safe-area-inset-bottom));z-index:30;display:flex;flex-direction:column;align-items:flex-end;gap:12px}
+.fab{position:relative;width:54px;height:54px;border-radius:50%;border:0;font-size:21px;color:#fff;background:linear-gradient(135deg,var(--a),var(--b));box-shadow:0 8px 20px #0004;transition:transform .2s}
+.fab:active{transform:scale(.88)}
+.fab.main::after{content:"";position:absolute;inset:0;border-radius:50%;border:2px solid var(--a);animation:ring 2.6s ease-out infinite}
+@keyframes ring{from{transform:scale(1);opacity:.7}to{transform:scale(1.7);opacity:0}}
+.fab.s{width:46px;height:46px;font-size:18px}
+.shade{position:fixed;inset:0;background:#0007;z-index:40;display:none}
+.shade.show{display:block}
+#shade2{z-index:60}
+#drawer{position:fixed;top:0;right:0;height:100%;width:290px;max-width:85vw;z-index:50;background:var(--bg2);border-left:1px solid var(--bd);padding:20px;padding-top:calc(20px + env(safe-area-inset-top));overflow:auto;transform:translateX(105%);transition:transform .3s}
+#drawer.show{transform:none}
+#sheet{position:fixed;left:0;right:0;bottom:0;height:88vh;height:88dvh;max-width:720px;margin:0 auto;z-index:70;background:var(--bg2);border:1px solid var(--bd);border-radius:24px 24px 0 0;display:flex;flex-direction:column;transform:translateY(105%);transition:transform .3s}
+#sheet.show{transform:none}
+.shead{display:flex;justify-content:space-between;align-items:center;padding:14px 16px 6px}
+.tabs{display:flex;gap:8px;overflow-x:auto;padding:6px 16px 10px;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tabs .chip{white-space:nowrap;padding:8px 14px;font-size:.88rem}
+#sbody{flex:1;overflow:auto;padding:4px 16px calc(24px + env(safe-area-inset-bottom))}
+.stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:12px}
+.stat{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:12px}
+.stat b{display:block;font-size:1.35rem;margin-top:2px}
+.strip{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px}
+.strip span{width:27px;height:27px;border-radius:8px;font-size:.7rem;display:grid;place-items:center;color:#fff;font-weight:700}
+.tag{font-size:.72rem;padding:2px 9px;border-radius:10px;background:var(--bd);color:var(--mu);white-space:nowrap}
+.sec{font-weight:800;font-size:.8rem;letter-spacing:.06em;text-transform:uppercase;color:var(--mu);margin:16px 0 8px}
+.empty{text-align:center;padding:40px 10px;color:var(--mu)}.empty b{display:block;font-size:2.2rem;margin-bottom:6px}
+.grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin:14px 0}
+.qn{aspect-ratio:1;border-radius:10px;border:1px solid var(--bd);background:var(--card);font-weight:700}
+.qn.ans{background:#10b981;color:#fff;border-color:#10b981}.qn.mk{background:#f59e0b;color:#fff;border-color:#f59e0b}.qn.cur{outline:3px solid var(--a)}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.timer{font-weight:800;padding:6px 14px;border-radius:20px;background:var(--card);border:1px solid var(--bd);font-variant-numeric:tabular-nums}
+.timer.low{color:#ef4444}
+.bar{height:6px;border-radius:6px;background:var(--bd);overflow:hidden;margin:8px 0 12px}.bar i{display:block;height:100%;background:linear-gradient(90deg,var(--a),var(--b));transition:width .3s}
+.sm{margin-bottom:14px}.sm .chip{padding:6px 12px;font-size:.85rem}
+.qt{font-size:1.08rem;line-height:1.5;display:block}
+.opt{display:block;width:100%;text-align:left;padding:14px;margin-top:10px;border-radius:14px;border:1px solid var(--bd);background:var(--bg);transition:transform .15s}
+button.opt:active{transform:scale(.98)}
+.opt.sel{background:linear-gradient(135deg,var(--a),var(--b));color:#fff;border-color:transparent}
+.opt.ok{background:#10b98126;border-color:#10b981}.opt.bad{background:#ef444426;border-color:#ef4444}
+.big{font-size:2.8rem;font-weight:900;background:linear-gradient(90deg,var(--a),var(--b));-webkit-background-clip:text;background-clip:text;color:transparent}
+.dot{width:28px;height:28px;border-radius:50%;border:2px solid var(--bg2);box-shadow:0 0 0 1px var(--bd)}
+.dot.on{box-shadow:0 0 0 3px var(--tx)}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
 </head>
 <body>
-
-  <!-- Minimal Top Ribbon -->
-  <header class="top-nav">
-    <div class="brand">
-      <div class="brand-badge">WC</div>
-      <div class="brand-text">
-        <h1>WISE CHOICE</h1>
-        <span>Study Buddy</span>
-      </div>
-    </div>
-    <div class="nav-controls">
-      <div id="liveTimer" class="timer-badge hidden">
-        <span class="timer-dot"></span>
-        <span id="timeDisplay">00:00</span>
-      </div>
-      <button id="themeToggle" class="icon-btn" title="Toggle Dark/Light Mode">🌓</button>
-      <button id="paletteToggle" class="icon-btn" title="Cycle Palette Accent">🎨</button>
-    </div>
-  </header>
-
-  <main class="app-container">
-
-    <!-- Screen 1: Dashboard / Setup -->
-    <section id="setupScreen" class="view-panel active">
-      <div class="hero-card">
-        <h2>RRB NTPC (Graduate) CBT PYQ Portal</h2>
-        <p>Real exam shift simulations and focused sectional drills.</p>
-      </div>
-
-      <div class="config-grid">
-        <!-- Paper Selection -->
-        <div class="card">
-          <label class="card-label">1. Select Target PYQ Paper</label>
-          <div class="select-group">
-            <select id="paperSelector">
-              <option value="rrb_cbt1_2026_day01_shift1">CEN 06/2026 - Day 1 (Shift 1)</option>
-              <option value="custom" disabled>+ Add custom shift files in js/data/</option>
-            </select>
-          </div>
-        </div>
-
-        <!-- Mode Selection -->
-        <div class="card">
-          <label class="card-label">2. Select Test Mode</label>
-          <div class="mode-toggle-group">
-            <button type="button" class="mode-pill active" data-mode="full">
-              Full Mock Exam
-              <small>All 3 Sections • 90 Mins</small>
-            </button>
-            <button type="button" class="mode-pill" data-mode="sectional">
-              Sectional Test
-              <small>Custom Sections & Timing</small>
-            </button>
-          </div>
-        </div>
-
-        <!-- Sectional Config (Hidden by default) -->
-        <div id="sectionalConfig" class="card hidden">
-          <label class="card-label">3. Customize Section & Duration</label>
-          <div class="section-checkbox-group">
-            <label class="checkbox-container">
-              <input type="checkbox" name="targetSection" value="maths" checked>
-              <span class="custom-chk"></span>
-              Mathematics (30 Qs)
-            </label>
-            <label class="checkbox-container">
-              <input type="checkbox" name="targetSection" value="reasoning" checked>
-              <span class="custom-chk"></span>
-              General Intelligence & Reasoning (30 Qs)
-            </label>
-            <label class="checkbox-container">
-              <input type="checkbox" name="targetSection" value="gs" checked>
-              <span class="custom-chk"></span>
-              General Awareness / GS (40 Qs)
-            </label>
-          </div>
-
-          <div class="timing-input-box">
-            <label for="customMinutes">Custom Duration (Minutes):</label>
-            <input type="number" id="customMinutes" value="30" min="5" max="180">
-          </div>
-        </div>
-      </div>
-
-      <div class="action-dock">
-        <button id="startTestBtn" class="btn btn-primary btn-lg">Launch Test</button>
-      </div>
-    </section>
-
-    <!-- Screen 2: Test Arena -->
-    <section id="testScreen" class="view-panel">
-      <!-- Section Switcher Bar -->
-      <nav id="sectionTabs" class="section-tabs-bar"></nav>
-
-      <div class="exam-workspace">
-        <!-- Question Stage -->
-        <div class="question-stage">
-          <div class="stage-header">
-            <span id="currentSectionName" class="badge-section">General Awareness</span>
-            <span id="questionCounter" class="badge-counter">Question 1 of 100</span>
-          </div>
-
-          <div class="question-card">
-            <h3 id="questionText">Loading question text...</h3>
-            <div id="optionsList" class="options-container"></div>
-          </div>
-
-          <div class="stage-footer">
-            <button id="prevBtn" class="btn btn-secondary">Previous</button>
-            <button id="markBtn" class="btn btn-outline">Review Later</button>
-            <button id="clearBtn" class="btn btn-ghost">Clear</button>
-            <button id="nextBtn" class="btn btn-primary">Save & Next</button>
-          </div>
-        </div>
-
-        <!-- Question Palette (Desktop side panel, mobile slide-up drawer) -->
-        <aside id="paletteDrawer" class="palette-drawer">
-          <div class="palette-header">
-            <h4>Question Status</h4>
-            <button id="closePaletteBtn" class="icon-btn-sm drawer-close">✕</button>
-          </div>
-
-          <div class="status-legend">
-            <div class="legend-item"><span class="badge-dot dot-answered"></span> Answered</div>
-            <div class="legend-item"><span class="badge-dot dot-unanswered"></span> Unanswered</div>
-            <div class="legend-item"><span class="badge-dot dot-marked"></span> Review</div>
-          </div>
-
-          <div id="paletteGrid" class="palette-grid"></div>
-
-          <div class="palette-actions">
-            <button id="submitTestBtn" class="btn btn-danger btn-block">Final Submit</button>
-          </div>
-        </aside>
-      </div>
-    </section>
-
-    <!-- Screen 3: Scorecard & Analytics -->
-    <section id="resultScreen" class="view-panel">
-      <div class="result-hero card">
-        <h2>Performance Evaluation</h2>
-        <div class="score-display">
-          <div class="score-metric">
-            <span id="finalScore" class="metric-val">0.00</span>
-            <span class="metric-label">Net Score (1/3 Neg)</span>
-          </div>
-          <div class="score-metric">
-            <span id="accuracyRate" class="metric-val">0%</span>
-            <span class="metric-label">Accuracy</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="card result-breakdown">
-        <h3>Sectional Breakdown</h3>
-        <table class="report-table">
-          <thead>
-            <tr>
-              <th>Section</th>
-              <th>Attempted</th>
-              <th>Correct</th>
-              <th>Incorrect</th>
-              <th>Marks</th>
-            </tr>
-          </thead>
-          <tbody id="resultBreakdownBody"></tbody>
-        </table>
-      </div>
-
-      <div class="card solution-review">
-        <h3>Detailed Answer Review</h3>
-        <div id="solutionContainer"></div>
-      </div>
-
-      <div class="action-dock">
-        <button id="restartBtn" class="btn btn-primary">Back to Dashboard</button>
-      </div>
-    </section>
-
-  </main>
-
-  <!-- Floating Mobile Palette FAB -->
-  <button id="floatingPaletteBtn" class="floating-fab hidden" title="View Question Matrix">
-    📑
-  </button>
-
-  <!-- Load Sample Shift Data File -->
-  <script src="js/data/rrb_cbt1_2026_day01_shift1.js"></script>
-  <script src="js/app.js"></script>
+<div class="bg"><i></i><i></i><i></i><i></i></div>
+<header><span class="logo">⚡ WISE CHOICE Study Buddy</span><button class="sw" id="tgl" data-act="theme" aria-label="Dark / light mode"><i></i></button></header>
+<main id="app"></main>
+<div class="shade" id="shade" data-act="closegrid"></div>
+<div id="drawer"></div>
+<div class="shade" id="shade2" data-act="closesheet"></div>
+<div id="sheet" aria-label="Settings and analytics">
+  <div class="shead"><b style="font-size:1.1rem">⚙️ Settings &amp; Analytics</b><button class="btn g s" data-act="closesheet">✕ Close</button></div>
+  <div class="tabs" id="stabs"></div>
+  <div id="sbody"></div>
+</div>
+<input type="file" id="imp" accept=".json,application/json" style="display:none">
+<div class="fabs">
+  <button class="fab s" id="bExit" data-act="exit" style="display:none" aria-label="Exit test">✕</button>
+  <button class="fab s" id="bGrid" data-act="grid" style="display:none" aria-label="Question list">▦</button>
+  <button class="fab main" data-act="sheet" aria-label="Settings and analytics">⚙️</button>
+</div>
+<script>
+(function(){
+var $=function(s){return document.querySelector(s)};
+var demo=!window.DAYS;
+if(demo){
+  window.RULES={fullMinutes:90,negative:1/3,sections:["Maths","Reasoning","General Studies"]};
+  window.DAYS=[{date:"2025-06-05",shifts:{1:"demo"}}];
+  window.PAPERS={"2025-06-05_S1":{date:"2025-06-05",shift:1,questions:[
+   {s:"Maths",c:"Percentage",q:"What is 15% of 240?",o:["30","36","40","42"],a:1},
+   {s:"Maths",c:"Time & Distance",q:"A train 120 m long crosses a pole in 6 s. Its speed in km/h is?",o:["60","66","72","80"],a:2},
+   {s:"Reasoning",c:"Number Series",q:"Find the next term: 2, 6, 12, 20, ?",o:["28","30","32","36"],a:1},
+   {s:"Reasoning",c:"Coding-Decoding",q:"If CAT = 24 and DOG = 26, then BAT = ?",o:["23","24","25","27"],a:0},
+   {s:"General Studies",c:"Polity",q:"Who is known as the Father of the Indian Constitution?",o:["Nehru","Gandhi","B. R. Ambedkar","Patel"],a:2},
+   {s:"General Studies",c:"Economy",q:"The headquarters of the Reserve Bank of India is in?",o:["Delhi","Mumbai","Kolkata","Chennai"],a:1}]}};
+}
+window.PAPERS=window.PAPERS||{};
+var R=window.RULES,DAYS=window.DAYS,app=$('#app'),root=document.documentElement;
+/* ---------- storage ---------- */
+function put(k,v){try{localStorage.setItem(k,typeof v==='string'?v:JSON.stringify(v))}catch(e){}}
+function get(k,d){try{var v=localStorage.getItem(k);return v===null?d:JSON.parse(v)}catch(e){return d}}
+var SET=Object.assign({font:1,motion:true,showTimer:true,autoNext:false,shuffleQ:false,shuffleO:false,confirmSubmit:true,autoWrong:true,haptic:true,wake:false,defMins:30,defNeg:true},get('wc_set',{}));
+var ATT=get('wc_att',[]),SAV=get('wc_sav',{});
+var th=get('wc_t','dark'),pl=get('wc_p','violet');root.dataset.theme=th;root.dataset.pal=pl;
+var S={view:'home',day:null,shift:null,mode:'full',secs:{},neg:SET.defNeg,mins:SET.defMins,qs:[],ans:[],qt:[],mk:{},cur:0,left:0,total:0,t:null,grid:false,tab:'last',sf:'all',cf:'All',wl:null};
+R.sections.forEach(function(s){S.secs[s]=true});
+function prefs(){root.style.setProperty('--fs',['14.5px','16px','18px'][SET.font]);root.dataset.motion=SET.motion?'on':'off'}
+function saveSet(){put('wc_set',SET);prefs()}
+prefs();
+/* ---------- helpers ---------- */
+var pad=function(n){return String(n).padStart(2,'0')};
+var fmt=function(s){s=Math.max(0,s);return pad(Math.floor(s/60))+':'+pad(s%60)};
+var fmtDate=function(d){var x=new Date(d+'T00:00');return isNaN(x)?d:x.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})};
+var pct=function(a,b){return b?Math.round(a/b*100):0};
+var tone=function(p){return p>=75?'#10b981':p>=50?'#f59e0b':'#ef4444'};
+var lab=function(p){return p>=75?'Strong':p>=50?'Average':'Weak'};
+function bar(p){return '<div class="bar"><i style="width:'+p+'%;background:'+tone(p)+'"></i></div>'}
+function render(h){app.innerHTML=h;app.classList.remove('in');void app.offsetWidth;app.classList.add('in');window.scrollTo(0,0)}
+function sw(on,act,v){return '<button class="sw '+(on?'on':'')+'" role="switch" aria-checked="'+!!on+'" data-act="'+act+'" data-v="'+(v||'')+'"><i></i></button>'}
+function fabs(t){$('#bGrid').style.display=t?'block':'none';$('#bExit').style.display=t?'block':'none'}
+function buzz(){if(SET.haptic&&navigator.vibrate)try{navigator.vibrate(10)}catch(e){}}
+function ask(m){return SET.confirmSubmit?confirm(m):true}
+function getWake(){if(SET.wake&&navigator.wakeLock)navigator.wakeLock.request('screen').then(function(l){S.wl=l}).catch(function(){})}
+function relWake(){try{if(S.wl)S.wl.release()}catch(e){}S.wl=null}
+function shuf(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}return a}
+/* saved questions */
+function keep(q,f){var e=SAV[q._k]||(SAV[q._k]={k:q._k,s:q.s,c:q.c||'General',q:q.q,o:q.o,a:q.a,src:q._src||''});e[f]=true}
+function prune(){Object.keys(SAV).forEach(function(k){if(!SAV[k].b&&!SAV[k].w)delete SAV[k]})}
+function persist(){prune();put('wc_sav',SAV)}
+/* ---------- home ---------- */
+function home(){
+  if(S.mode==='saved')S.mode='full';
+  S.view='home';clearInterval(S.t);relWake();fabs(false);closeGrid();
+  var d=DAYS.filter(function(x){return x.date===S.day})[0];
+  render('<h1>Practice smarter 🚀</h1><p class="mu">RRB NTPC (Graduate) · Previous Year Questions</p>'+
+  '<h2>1 · Choose Day</h2><div class="chips">'+DAYS.map(function(x){return '<button class="chip '+(S.day===x.date?'on':'')+'" data-act="day" data-v="'+x.date+'">'+fmtDate(x.date)+'</button>'}).join('')+'</div>'+
+  '<h2>2 · Choose Shift</h2><div class="chips">'+[1,2,3].map(function(n){var ok=d&&d.shifts[n];return '<button class="chip '+(S.shift===n?'on':'')+'" data-act="shift" data-v="'+n+'" '+(ok?'':'disabled')+'>Shift '+n+'</button>'}).join('')+'</div>'+
+  (d?'':'<p class="mu" style="margin-top:8px">Pick a day first.</p>')+
+  '<h2>3 · Choose Test Type</h2><div class="chips"><button class="chip '+(S.mode==='full'?'on':'')+'" data-act="mode" data-v="full">Full Test</button><button class="chip '+(S.mode==='sec'?'on':'')+'" data-act="mode" data-v="sec">Sectional (Custom)</button></div>'+
+  '<div class="card" style="margin-top:12px">'+(S.mode==='full'
+   ?'<b>Standard exam pattern</b><p class="mu" style="margin-top:4px">Fixed '+R.fullMinutes+' minutes · all sections · negative marking of '+R.negative.toFixed(2)+' per wrong answer.</p>'
+   :'<b>Sections</b>'+R.sections.map(function(s){return '<div class="line"><span>'+s+'</span>'+sw(S.secs[s],'sec',s)+'</div>'}).join('')+
+    '<div class="line"><span>Negative marking</span>'+sw(S.neg,'neg')+'</div>'+
+    '<div class="line"><span>Time (minutes)</span><input type="number" id="mins" min="1" max="180" value="'+S.mins+'"></div>')+'</div>'+
+  '<button class="btn" data-act="start" style="width:100%;padding:16px">Start Test →</button>'+
+  (demo?'<p class="note">Demo mode: the <b>data</b> folder was not found, so a built-in sample paper is shown. Keep index.html next to the data folder to use your own papers.</p>':''));
+}
+document.addEventListener('input',function(e){
+  if(e.target.id==='mins')S.mins=+e.target.value||1;
+  if(e.target.id==='dm'){SET.defMins=Math.max(1,Math.min(180,+e.target.value||30));S.mins=SET.defMins;saveSet()}
+});
+/* ---------- test ---------- */
+function load(day,shift){return new Promise(function(res,rej){
+  var key=day.date+'_S'+shift;
+  if(window.PAPERS[key])return res(window.PAPERS[key]);
+  var s=document.createElement('script');s.src=day.shifts[shift];
+  s.onload=function(){window.PAPERS[key]?res(window.PAPERS[key]):rej()};s.onerror=rej;document.body.appendChild(s)})}
+async function start(){
+  if(!S.day||!S.shift)return alert('Please choose a day and a shift.');
+  var secs=R.sections.filter(function(s){return S.secs[s]});
+  if(S.mode==='sec'&&!secs.length)return alert('Switch on at least one section.');
+  var day=DAYS.filter(function(x){return x.date===S.day})[0],paper;
+  try{paper=await load(day,S.shift)}catch(e){return alert('Could not load this paper file. Check the path in data/manifest.js.')}
+  var key=day.date+'_S'+S.shift,src=fmtDate(day.date)+' · Shift '+S.shift,qs=[];
+  paper.questions.forEach(function(q,i){if(S.mode==='full'||secs.indexOf(q.s)>-1)qs.push(Object.assign({},q,{_k:key+'#'+i,_src:src}))});
+  if(!qs.length)return alert('No questions found for this selection.');
+  S.src=src;begin(qs,(S.mode==='full'?R.fullMinutes:Math.max(1,S.mins))*60);
+}
+function begin(qs,total){
+  if(SET.shuffleQ){var g={},o=[];qs.forEach(function(q){if(!g[q.s]){g[q.s]=[];o.push(q.s)}g[q.s].push(q)});qs=[];o.forEach(function(s){qs=qs.concat(shuf(g[s]))})}
+  if(SET.shuffleO)qs=qs.map(function(q){var ord=shuf(q.o.map(function(_,i){return i}));return Object.assign({},q,{o:ord.map(function(i){return q.o[i]}),a:ord.indexOf(q.a)})});
+  S.qs=qs;S.ans=qs.map(function(){return null});S.qt=qs.map(function(){return 0});S.mk={};S.cur=0;S.total=total;S.left=total;
+  clearInterval(S.t);S.t=setInterval(tick,1000);getWake();fabs(true);test();
+}
+function tick(){
+  S.left--;if(S.view==='test')S.qt[S.cur]++;
+  var el=$('#tm');if(el){el.textContent=SET.showTimer?fmt(S.left):'⏱ ••';el.classList.toggle('low',S.left<300)}
+  if(S.left<=0){alert('Time is up!');submit()}
+}
+function test(){
+  S.view='test';
+  var q=S.qs[S.cur],done=S.ans.filter(function(a){return a!==null}).length,secs=[],sv=SAV[q._k]&&SAV[q._k].b;
+  S.qs.forEach(function(x){if(secs.indexOf(x.s)<0)secs.push(x.s)});
+  render('<div class="top"><span class="mu">Q '+(S.cur+1)+' / '+S.qs.length+' · '+done+' answered</span><span class="timer '+(S.left<300?'low':'')+'" id="tm">'+(SET.showTimer?fmt(S.left):'⏱ ••')+'</span></div>'+
+  '<div class="bar"><i style="width:'+((S.cur+1)/S.qs.length*100)+'%"></i></div>'+
+  '<div class="chips sm">'+secs.map(function(s){return '<button class="chip '+(s===q.s?'on':'')+'" data-act="secjump" data-v="'+s+'">'+s+'</button>'}).join('')+'</div>'+
+  '<div class="card">'+(q.c?'<span class="tag">'+q.c+'</span><div style="height:8px"></div>':'')+'<b class="qt">'+q.q+'</b>'+q.o.map(function(o,i){return '<button class="opt '+(S.ans[S.cur]===i?'sel':'')+'" data-act="opt" data-v="'+i+'">'+'ABCD'.charAt(i)+'. '+o+'</button>'}).join('')+'</div>'+
+  '<div class="row"><button class="btn g" data-act="prev">←</button><button class="btn g" data-act="mark">'+(S.mk[S.cur]?'★ Marked':'☆ Mark')+'</button><button class="btn g" data-act="save">'+(sv?'🔖 Saved':'🔖 Save')+'</button><button class="btn g" data-act="clear">Clear</button><button class="btn" data-act="next" style="margin-left:auto">'+(S.cur===S.qs.length-1?'Submit ✓':'Next →')+'</button></div>');
+  if(S.grid)fillGrid();
+}
+function fillGrid(){
+  var a=S.ans.filter(function(x){return x!==null}).length,m=Object.keys(S.mk).length;
+  $('#drawer').innerHTML='<b>Questions</b><p class="mu" style="margin-top:4px">🟩 '+a+' answered · 🟧 '+m+' marked · '+(S.qs.length-a)+' left</p><div class="grid">'+
+   S.qs.map(function(_,i){return '<button class="qn '+(S.ans[i]!==null?'ans':'')+' '+(S.mk[i]?'mk':'')+' '+(i===S.cur?'cur':'')+'" data-act="jump" data-v="'+i+'">'+(i+1)+'</button>'}).join('')+
+   '</div><button class="btn" data-act="submit" style="width:100%">Submit Test</button>';
+}
+function openGrid(){S.grid=true;fillGrid();$('#drawer').classList.add('show');$('#shade').classList.add('show')}
+function closeGrid(){S.grid=false;$('#drawer').classList.remove('show');$('#shade').classList.remove('show')}
+function submit(){
+  clearInterval(S.t);relWake();fabs(false);closeGrid();S.view='result';
+  var neg=S.mode==='full'?R.negative:(S.neg?R.negative:0),st={},ch={},det=[],sc=0;
+  S.qs.forEach(function(q,i){
+    var r=S.ans[i]===null?'n':S.ans[i]===q.a?'c':'w',ck=q.s+'|'+(q.c||'General');
+    var x=st[q.s]=st[q.s]||{c:0,w:0,n:0,t:0},y=ch[ck]=ch[ck]||{c:0,w:0,n:0,t:0};
+    x.t++;y.t++;x[r]++;y[r]++;if(r==='c')sc++;if(r==='w')sc-=neg;
+    det.push({s:q.s,r:r,t:S.qt[i]||0});
+    if(r==='w'&&(SET.autoWrong||S.mode==='saved'))keep(q,'w');
+    if(r==='c'&&S.mode==='saved'&&SAV[q._k])SAV[q._k].w=false;
+  });
+  persist();
+  ATT.push({ts:Date.now(),src:S.mode==='saved'?'Saved-question practice':S.src,mode:S.mode,sc:sc,max:S.qs.length,used:S.total-Math.max(0,S.left),total:S.total,secs:st,chaps:ch,det:det});
+  if(ATT.length>40)ATT.shift();put('wc_att',ATT);
+  render('<div class="card" style="text-align:center"><p class="mu">Your Score</p><div class="big">'+sc.toFixed(2)+' / '+S.qs.length+'</div><p class="mu">Time taken: '+fmt(ATT[ATT.length-1].used)+'</p></div>'+
+  Object.keys(st).map(function(k){var v=st[k];return '<div class="card"><b>'+k+'</b> <span class="mu">✅ '+v.c+' · ❌ '+v.w+' · ⏭ '+v.n+'</span><div class="bar" style="margin-bottom:0"><i style="width:'+pct(v.c,v.t)+'%"></i></div></div>'}).join('')+
+  '<div class="row" style="margin:6px 0"><button class="btn" data-act="sheet" data-v="last">📊 Full analysis</button><button class="btn g" data-act="home">← Home</button></div>'+
+  (S.mode!=='saved'&&SET.autoWrong?'<p class="mu">Wrong answers were added to your 🔖 Saved notebook.</p>':'')+
+  '<h2>Review</h2>'+S.qs.map(function(q,i){return '<div class="card"><div class="line" style="padding-top:0"><span class="mu">'+q.s+' · Q'+(i+1)+'</span><button class="btn g s" data-act="rsave" data-v="'+i+'">'+(SAV[q._k]&&SAV[q._k].b?'🔖 Saved':'🔖 Save')+'</button></div><b class="qt">'+q.q+'</b>'+q.o.map(function(o,j){return '<div class="opt '+(j===q.a?'ok':S.ans[i]===j?'bad':'')+'">'+o+'</div>'}).join('')+'</div>'}).join(''));
+}
+/* ---------- analytics sheet ---------- */
+function st(l,v){return '<div class="stat"><span class="mu">'+l+'</span><b>'+v+'</b></div>'}
+function empty(i,t,d){return '<div class="empty"><b>'+i+'</b><div style="color:var(--tx);font-weight:700">'+t+'</div><div>'+d+'</div></div>'}
+function chapRows(m,sec){
+  var ks=Object.keys(m).filter(function(k){return !sec||sec==='All'||k.split('|')[0]===sec});
+  ks.sort(function(a,b){return pct(m[a].c,m[a].t)-pct(m[b].c,m[b].t)});
+  if(!ks.length)return '<p class="mu">No data yet.</p>';
+  return ks.map(function(k){var v=m[k],p=pct(v.c,v.t),pr=k.split('|');
+    return '<div class="card"><div class="line" style="padding:0"><b>'+pr[1]+'</b><span class="tag">'+pr[0]+'</span></div><div class="line" style="padding:4px 0 0"><span class="mu">'+v.c+'/'+v.t+' correct · '+v.w+' wrong · '+v.n+' skipped</span><b style="color:'+tone(p)+'">'+p+'% · '+lab(p)+'</b></div>'+bar(p)+'</div>'}).join('');
+}
+function tLast(){
+  var a=ATT[ATT.length-1];if(!a)return empty('📊','No test yet','Finish a test and its full analysis shows up here.');
+  var c=0,w=0,n=0;Object.keys(a.secs).forEach(function(k){c+=a.secs[k].c;w+=a.secs[k].w;n+=a.secs[k].n});
+  var slow=a.det.map(function(d,i){return {i:i,t:d.t,s:d.s}}).sort(function(x,y){return y.t-x.t}).slice(0,3);
+  return '<p class="mu" style="margin-bottom:10px">'+a.src+' · '+new Date(a.ts).toLocaleString('en-IN',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})+'</p>'+
+  '<div class="stats">'+st('Score',a.sc.toFixed(2)+' / '+a.max)+st('Accuracy',pct(c,c+w)+'%')+st('Attempted',(c+w)+' / '+a.max)+st('Avg time / Q',Math.round(a.used/a.max)+'s')+'</div>'+
+  '<div class="sec">Question map</div><div class="strip">'+a.det.map(function(d,i){return '<span style="background:'+(d.r==='c'?'#10b981':d.r==='w'?'#ef4444':'#6b7280')+'">'+(i+1)+'</span>'}).join('')+'</div>'+
+  '<div class="sec">Section-wise</div>'+Object.keys(a.secs).map(function(k){var v=a.secs[k],p=pct(v.c,v.t);return '<div class="card"><div class="line" style="padding:0"><b>'+k+'</b><b style="color:'+tone(p)+'">'+p+'%</b></div><span class="mu">✅ '+v.c+' · ❌ '+v.w+' · ⏭ '+v.n+'</span>'+bar(p)+'</div>'}).join('')+
+  '<div class="sec">Chapter-wise (this test)</div>'+chapRows(a.chaps)+
+  '<div class="sec">Slowest questions</div>'+slow.map(function(x){return '<div class="line"><span>Q'+(x.i+1)+' <span class="tag">'+x.s+'</span></span><b>'+x.t+'s</b></div>'}).join('');
+}
+function agg(){var s={},c={};function mg(m,k,v){var x=m[k]||(m[k]={c:0,w:0,n:0,t:0});x.c+=v.c;x.w+=v.w;x.n+=v.n;x.t+=v.t}
+  ATT.forEach(function(a){Object.keys(a.secs).forEach(function(k){mg(s,k,a.secs[k])});Object.keys(a.chaps).forEach(function(k){mg(c,k,a.chaps[k])})});return {s:s,c:c}}
+function streak(){var d={};ATT.forEach(function(a){d[new Date(a.ts).toDateString()]=1});var n=0,x=new Date();if(!d[x.toDateString()])x.setDate(x.getDate()-1);while(d[x.toDateString()]){n++;x.setDate(x.getDate()-1)}return n}
+function spark(){var p=ATT.slice(-12).map(function(a){return Math.max(0,Math.min(100,a.sc/a.max*100))});if(p.length<2)return '<p class="mu">Take 2+ tests to see your trend.</p>';
+  return '<svg viewBox="0 0 200 50" preserveAspectRatio="none" style="width:100%;height:70px"><polyline points="'+p.map(function(v,i){return (i*200/(p.length-1)).toFixed(1)+','+(48-v*.46).toFixed(1)}).join(' ')+'" fill="none" style="stroke:var(--a)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/></svg>'}
+function tAll(){
+  if(!ATT.length)return empty('📈','No data yet','Your overall performance appears after your first test.');
+  var g=agg(),c=0,w=0,t=0,q=0,best=0,sum=0;
+  Object.keys(g.s).forEach(function(k){c+=g.s[k].c;w+=g.s[k].w});
+  ATT.forEach(function(a){var p=a.sc/a.max*100;sum+=p;if(p>best)best=p;t+=a.used;q+=a.max});
+  return '<div class="stats">'+st('Tests taken',ATT.length)+st('Avg score',Math.round(sum/ATT.length)+'%')+st('Best score',Math.round(best)+'%')+st('Accuracy',pct(c,c+w)+'%')+st('Questions solved',q)+st('Study streak','🔥 '+streak()+' day'+(streak()===1?'':'s'))+'</div>'+
+  '<div class="card"><span class="mu">Score trend (last 12 tests)</span>'+spark()+'</div>'+
+  '<div class="sec">Section-wise accuracy</div>'+Object.keys(g.s).map(function(k){var v=g.s[k],p=pct(v.c,v.t);return '<div class="card"><div class="line" style="padding:0"><b>'+k+'</b><b style="color:'+tone(p)+'">'+p+'%</b></div><span class="mu">'+v.c+' of '+v.t+' correct</span>'+bar(p)+'</div>'}).join('')+
+  '<div class="sec">Recent tests</div>'+ATT.slice(-5).reverse().map(function(a){return '<div class="line"><span>'+a.src+'<small>'+new Date(a.ts).toLocaleDateString('en-IN',{day:'numeric',month:'short'})+'</small></span><b>'+a.sc.toFixed(1)+'/'+a.max+'</b></div>'}).join('')+
+  '<div class="mu" style="margin-top:6px">Total practice time: '+Math.round(t/60)+' min</div>';
+}
+function tChap(){
+  if(!ATT.length)return empty('📚','No chapter data','Add a "c" (chapter) to each question and take a test to see chapter-wise strengths.');
+  var g=agg();
+  return '<div class="chips sm">'+['All'].concat(R.sections).map(function(s){return '<button class="chip '+(S.cf===s?'on':'')+'" data-act="cfil" data-v="'+s+'">'+s+'</button>'}).join('')+'</div>'+
+  '<p class="mu" style="margin-bottom:10px">Weakest chapters first — practise these.</p>'+chapRows(g.c,S.cf);
+}
+function savedList(){return Object.keys(SAV).map(function(k){return SAV[k]}).filter(function(e){return S.sf==='all'||(S.sf==='b'&&e.b)||(S.sf==='w'&&e.w)})}
+function tSav(){
+  var all=Object.keys(SAV).length,l=savedList();
+  var h='<div class="chips sm">'+[['all','All ('+all+')'],['b','🔖 Bookmarked'],['w','❌ Wrong notebook']].map(function(x){return '<button class="chip '+(S.sf===x[0]?'on':'')+'" data-act="sfil" data-v="'+x[0]+'">'+x[1]+'</button>'}).join('')+'</div>';
+  if(!l.length)return h+empty('🔖','Nothing saved here','Tap 🔖 Save during a test. Wrong answers are saved automatically.');
+  return h+'<button class="btn" data-act="practice" style="width:100%;margin-bottom:12px">▶ Practise these ('+l.length+')</button>'+l.map(function(e){
+    return '<div class="card"><div class="line" style="padding:0 0 6px"><span><span class="tag">'+e.s+' · '+e.c+'</span> '+(e.w?'<span class="tag" style="color:#ef4444">wrong</span>':'')+'</span><button class="btn g s" data-act="delsav" data-v="'+e.k+'">🗑</button></div><b class="qt">'+e.q+'</b><div class="opt ok" style="margin-top:10px">✅ '+'ABCD'.charAt(e.a)+'. '+e.o[e.a]+'</div><span class="mu">'+e.src+'</span></div>'}).join('');
+}
+function setRow(l,d,c){return '<div class="line"><span>'+l+(d?'<small>'+d+'</small>':'')+'</span>'+c+'</div>'}
+function tSet(){
+  var kb=Math.round((JSON.stringify(ATT).length+JSON.stringify(SAV).length)/1024*10)/10;
+  return '<div class="sec">Appearance</div><div class="card">'+
+   setRow('Dark mode','',sw(root.dataset.theme==='dark','theme'))+
+   '<div class="line"><span>Colour palette</span><span class="row">'+['violet','ocean','sunset','forest','rose'].map(function(k){return '<button class="dot '+(root.dataset.pal===k?'on':'')+'" data-act="pick" data-v="'+k+'" style="background:'+({violet:'#8b5cf6',ocean:'#06b6d4',sunset:'#f97316',forest:'#10b981',rose:'#f43f5e'})[k]+'" aria-label="'+k+'"></button>'}).join('')+'</span></div>'+
+   '<div class="line"><span>Text size</span><span class="row">'+['A−','A','A+'].map(function(l,i){return '<button class="chip '+(SET.font===i?'on':'')+'" style="padding:6px 14px" data-act="font" data-v="'+i+'">'+l+'</button>'}).join('')+'</span></div>'+
+   setRow('Motion graphics','Turn off to save battery',sw(SET.motion,'tg','motion'))+'</div>'+
+  '<div class="sec">Test experience</div><div class="card">'+
+   setRow('Show timer','Hide it to reduce pressure',sw(SET.showTimer,'tg','showTimer'))+
+   setRow('Auto-next on answer','Jump ahead after choosing',sw(SET.autoNext,'tg','autoNext'))+
+   setRow('Shuffle questions','Within each section',sw(SET.shuffleQ,'tg','shuffleQ'))+
+   setRow('Shuffle options','Stops memorising positions',sw(SET.shuffleO,'tg','shuffleO'))+
+   setRow('Confirm before submit','',sw(SET.confirmSubmit,'tg','confirmSubmit'))+
+   setRow('Auto-save wrong answers','Builds your revision notebook',sw(SET.autoWrong,'tg','autoWrong'))+
+   setRow('Haptic feedback','Light vibration on taps',sw(SET.haptic,'tg','haptic'))+
+   setRow('Keep screen awake','During tests',sw(SET.wake,'tg','wake'))+
+   setRow('Default sectional time','Minutes','<input type="number" id="dm" min="1" max="180" value="'+SET.defMins+'">')+
+   setRow('Negative marking by default','For sectional tests',sw(SET.defNeg,'tg','defNeg'))+'</div>'+
+  '<div class="sec">Data</div><div class="card"><p class="mu" style="margin-bottom:10px">Stored on this device: '+ATT.length+' tests · '+Object.keys(SAV).length+' saved questions · '+kb+' KB</p>'+
+   '<div class="row"><button class="btn g s" data-act="export">⬇ Backup</button><button class="btn g s" data-act="import">⬆ Restore</button><button class="btn g s" data-act="wipe" style="color:#ef4444">🗑 Clear data</button></div></div>'+
+  '<p class="mu" style="text-align:center;margin-top:14px">WISE CHOICE Study Buddy</p>';
+}
+function sheet(){
+  var tabs=[['last','📊 Last test'],['all','📈 Overall'],['chap','📚 Chapters'],['sav','🔖 Saved'],['set','⚙️ Settings']];
+  $('#stabs').innerHTML=tabs.map(function(t){return '<button class="chip '+(S.tab===t[0]?'on':'')+'" data-act="tab" data-v="'+t[0]+'">'+t[1]+'</button>'}).join('');
+  var b=$('#sbody'),y=b.scrollTop;b.innerHTML=({last:tLast,all:tAll,chap:tChap,sav:tSav,set:tSet})[S.tab]();b.scrollTop=y;
+}
+function openSheet(tab){if(tab)S.tab=tab;sheet();$('#sheet').classList.add('show');$('#shade2').classList.add('show')}
+function closeSheet(){$('#sheet').classList.remove('show');$('#shade2').classList.remove('show')}
+/* ---------- actions ---------- */
+function download(name,txt){var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'application/json'}));a.download=name;document.body.appendChild(a);a.click();a.remove()}
+$('#imp').addEventListener('change',function(e){var f=e.target.files[0];if(!f)return;var r=new FileReader();
+  r.onload=function(){try{var d=JSON.parse(r.result);if(d.att)ATT=d.att;if(d.sav)SAV=d.sav;if(d.set)Object.assign(SET,d.set);put('wc_att',ATT);put('wc_sav',SAV);saveSet();sheet();alert('Backup restored.')}catch(x){alert('That file is not a valid backup.')}};r.readAsText(f);e.target.value=''});
+var A={
+ theme:function(){root.dataset.theme=root.dataset.theme==='dark'?'light':'dark';put('wc_t',root.dataset.theme);if($('#sheet').classList.contains('show'))sheet()},
+ pick:function(v){root.dataset.pal=v;put('wc_p',v);if($('#sheet').classList.contains('show'))sheet()},
+ day:function(v){S.day=v;var d=DAYS.filter(function(x){return x.date===v})[0];if(!d.shifts[S.shift])S.shift=null;home()},
+ shift:function(v){S.shift=+v;home()},
+ mode:function(v){S.mode=v;home()},
+ sec:function(v){S.secs[v]=!S.secs[v];home()},
+ neg:function(){S.neg=!S.neg;home()},
+ start:start,home:home,
+ opt:function(v){buzz();S.ans[S.cur]=+v;var c=S.cur;test();if(SET.autoNext&&c<S.qs.length-1)setTimeout(function(){if(S.view==='test'&&S.cur===c){S.cur++;test()}},280)},
+ prev:function(){if(S.cur>0){S.cur--;test()}},
+ next:function(){if(S.cur<S.qs.length-1){S.cur++;test()}else if(ask('Submit the test?'))submit()},
+ mark:function(){if(S.mk[S.cur])delete S.mk[S.cur];else S.mk[S.cur]=1;test()},
+ clear:function(){S.ans[S.cur]=null;test()},
+ save:function(){var q=S.qs[S.cur],e=SAV[q._k];if(e&&e.b)e.b=false;else keep(q,'b');persist();test()},
+ rsave:function(v,el){var q=S.qs[+v],e=SAV[q._k];if(e&&e.b)e.b=false;else keep(q,'b');persist();el.textContent=SAV[q._k]&&SAV[q._k].b?'🔖 Saved':'🔖 Save'},
+ jump:function(v){S.cur=+v;closeGrid();test()},
+ secjump:function(v){for(var i=0;i<S.qs.length;i++)if(S.qs[i].s===v){S.cur=i;break}test()},
+ grid:function(){S.grid?closeGrid():openGrid()},closegrid:closeGrid,
+ submit:function(){if(ask('Submit the test?'))submit()},
+ exit:function(){if(confirm('Exit this test? Your progress will be lost.'))home()},
+ sheet:function(v){openSheet(v)},closesheet:closeSheet,
+ tab:function(v){S.tab=v;sheet();$('#sbody').scrollTop=0},
+ cfil:function(v){S.cf=v;sheet()},sfil:function(v){S.sf=v;sheet()},
+ delsav:function(v){delete SAV[v];persist();sheet()},
+ practice:function(){
+   if(S.view==='test')return alert('Finish or exit the current test first.');
+   var l=savedList();if(!l.length)return;closeSheet();S.mode='saved';
+   begin(l.map(function(e){return {s:e.s,c:e.c,q:e.q,o:e.o.slice(),a:e.a,_k:e.k,_src:e.src}}),l.length*60)},
+ tg:function(v){SET[v]=!SET[v];if(v==='defNeg')S.neg=SET.defNeg;saveSet();sheet()},
+ font:function(v){SET.font=+v;saveSet();sheet()},
+ 'export':function(){download('wise-choice-backup.json',JSON.stringify({att:ATT,sav:SAV,set:SET}))},
+ 'import':function(){$('#imp').click()},
+ wipe:function(){if(confirm('Delete all analytics and saved questions from this device?')){ATT=[];SAV={};put('wc_att',ATT);put('wc_sav',SAV);sheet()}}
+};
+document.addEventListener('click',function(e){
+  var t=e.target.closest('[data-act]');
+  if(!t||t.disabled)return;
+  var f=A[t.dataset.act];if(f){if(t.dataset.act!=='opt')buzz();f(t.dataset.v,t)}
+});
+home();
+window.__WC={S:S,A:A};
+})();
+</script>
 </body>
 </html>
